@@ -1,5 +1,5 @@
 // ============================================================
-// Atom Voice — Turn-Based Cloned-Voice Chat
+// Zarvex Clone — Turn-Based Cloned-Voice Chat
 // ============================================================
 
 // Speech recognition transcribes based on the SPOKEN language, not
@@ -66,7 +66,7 @@ function getVolumeLevel(analyser) {
     sumSquares += normalized * normalized;
   }
   const rms = Math.sqrt(sumSquares / data.length);
-  return Math.min(1, rms * 4); // amplify quiet signals so motion reads clearly
+  return Math.min(1, rms * 4);
 }
 
 function reactivityLoop() {
@@ -74,11 +74,6 @@ function reactivityLoop() {
   if (currentOrbMode === "talking") {
     level = getVolumeLevel(playbackAnalyser);
   } else if (currentOrbMode === "listening") {
-    // No real audio level available here (Web Speech API keeps its own
-    // mic capture private — reading it ourselves means a second, competing
-    // mic stream, which is what broke recognition on mobile). This is a
-    // simulated breathing pulse instead: alive-looking, but not tied to
-    // your actual voice.
     level = 0.35 + 0.25 * Math.sin(performance.now() / 450);
   }
   const prev = parseFloat(orb.style.getPropertyValue("--level")) || 0;
@@ -128,7 +123,7 @@ function playReplyAudio(arrayBuffer) {
         activeSource = source;
         setOrbState("talking");
         setStatus("live", true);
-        hint.textContent = "Atom is speaking";
+        hint.textContent = "ZARVEX is speaking";
         source.onended = () => {
           activeSource = null;
           resolve();
@@ -152,7 +147,7 @@ function stopPlayback() {
 }
 
 // ============================================================
-// Backend calls
+// Backend calls — Gemini + Fish Audio
 // ============================================================
 async function getGeminiReply(message) {
   const response = await fetch("/api/chat", {
@@ -216,8 +211,6 @@ async function startTurn() {
     hint.textContent = "Listening";
     controls.classList.add("visible");
 
-    // Start inside the tap's gesture so iOS/Safari don't suspend the
-    // playback context we'll need a moment later.
     ensurePlaybackContext();
   } catch (err) {
     console.error(err);
@@ -270,10 +263,6 @@ async function startTurn() {
   };
 
   recognition.onend = () => {
-    // If recognition ended without ever firing onresult AND without
-    // onerror (this can happen silently on some mobile browsers), make
-    // sure we don't get stuck in "listening" — and actually tell the
-    // person something happened instead of quietly resetting.
     if (turnState === "listening") {
       showError("Didn't catch any speech — tap the circle and try again.");
       resetToIdle();

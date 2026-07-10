@@ -13,7 +13,7 @@
 const MODEL_NAME = "gemini-3.1-flash-lite";
 
 const SYSTEM_INSTRUCTION =
-  "You are Atom, a friendly, casual conversational partner. Keep replies short and natural, like a real phone call — a sentence or two, not paragraphs.";
+  "You are Zarvex, a friendly, casual conversational partner. Keep replies short and natural, like a real phone call — a sentence or two, not paragraphs.";
 
 module.exports = async function handler(req, res) {
   if (req.method !== "POST") {
